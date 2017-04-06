@@ -1,113 +1,95 @@
-package com.riotgames.sample;
 
-import java.util.Arrays;
-import java.util.Stack;
 
-/**
- * Calculator application
- */
-public class CalcApp {
-	double z;
+
+public String toSuffix(String infix){
+	// queue에  후위 식이 들어 간다.
+	List<String> queue = new ArrayList<String>();
+	//계산을 할려고 할떄 부호를 집어넣는다.
+	List<Character> stack = new ArrayList<Character>();
+	// 숫자와 부호를 전부 잘라낸다.
+	char[] charArr = infix.trim().toCharArray();
+	// 판정 표준오르 쓴다.
+	String standard = "*/+-()";
 	
-	private boolean isAnOperator(String s){
- 		return(s.length()==1&&"+-/*".indexOf(s)>=0);
- 	}
+	char ch = '&'; // 아무 의미 없는 부호  그냥  초기화 하기 위한 설정
+	//char의  길이를 기록한다.
+	int len = 0;
+	// 중위식을  후위식으로 변화하는 과정
 	
-    public double calc(String[] tokens) {
-        double firstOperand;
-        double secondOperand;
-        
-        Stack stack=new Stack();//문자배열의 길이만큼 생성
-        int num=0;
+	for (int i = 0; i < charArr.length; i++) {
+		ch = charArr[i]; // 현재 데이터를 저장
 		
-		String[]output=new String[tokens.length];//후위식출력위해만든배열
-		for(int i=0;i<tokens.length;i++){
-			int size2=stack.size();
-			if(tokens[i].equals("("))
-				stack.push((Object)tokens[i]);
-			else if(tokens[i].equals(")")){// )를 만난다면
-				while(size2!=0){
-					
-					if(stack.peek().toString().equals("("))
-						stack.pop();
-					else
-						output[num++]=(String)stack.pop();
-					size2--;				
-				}	
+		if(Character.isDigit(ch)){ // 숫자면
+			len++;
+		}
+		else if(Character.isLetter(ch)){ // 문자면
+			len++;
+		}
+		else if(ch == '.'){ // 소수점 이면
+			len++;
+		}
+		else if(Character.isSpaceChar(ch)){
+			/*
+			 *  space이면 한 단락이 끝난것을 말함
+			 *  예  100 * 2 100뒤에  스페이스가 있다는 것을 말하기 때문에 space전것을  저장
+			 */
+			if(len > 0){
+				// queue 에 추가
+				queue.add(String.valueOf(Arrays.copyOfRange(charArr, i - len, i)));
+				len = 0;
 			}
-			else if((stack.size()==0||stack.peek().toString().equals("("))&&"+-/*".indexOf(tokens[i])>=0)// 연산자이고 stack에 아무것도 없거나 ( 가 저장돼 있다면
-				stack.push((Object)tokens[i]);//stack에 넣는다			
-				
-			else if("+-/*".indexOf(tokens[i])<0)	//피연산자일경우				
-					output[num++]=tokens[i];	
-			
-			else if(stack.peek().toString().equals("*")||stack.peek().toString().equals("/")){// */가 저장되어있다면
-				output[num++]=(String)stack.pop();//저장된 연산자를 빼내고
-				stack.push((Object)tokens[i]);//넣는다
+			continue; //  space가  있으면  
+		}
+		else if(standard.indexOf(ch) != -1){ // 위에 정해준 표준중의 임의의 하나이면
+			if(len > 0){
+				// 숫자라 판단하고 queue에 집어넣기
+				queue.add(String.valueOf(Arrays.copyOfRange(charArr, i -len, i)));
+				len = 0;
 			}
-			else if("/*+-".indexOf(stack.peek().toString())>1)//+-저장되어있고
-					if("+-/*".indexOf(tokens[i])>1)//연산자가 / *이라면
-						stack.push((Object)tokens[i]);	// pop()시키지 않고 stack에 연산자를 추가시킨다. 				
-			
-			else if("/*+-".indexOf(stack.peek().toString())>1)//+-저장되어있고
-					if(tokens[i].equals("+")||tokens[i].equals("-")){//연산자가 + - 이라면
-						output[num++]=(String)stack.pop();//저장된 연산자를 빼내고
-						stack.push((Object)tokens[i]);//넣는다 	
-					}				
+			if(ch == '('){ // 오른쪽괄호 이면 stack에 넣기
+				stack.add(ch);
+				continue;
+			}
+			if(!stack.isEmpty()){ // stack 안에  뭐가 있다면
+				int size = stack.size()-1; // 맨 마지막 원소의 index
+				boolean flag = false; 
+				// ch 가 ) 이면 stack 에서 ( 만날때 까지  꺼낸다.
+				while(size >=0 && ch ==')' && stack.get(size) != '('){
+					// 꺼낸것을 다시 queue에 집어 넣기
+					queue.add(String.valueOf(stack.remove(size)));
+					// 영원히 stack의  꼭대기를 가리치게함( stack의 성질)
+					size--;
+					// true 이면 ( ) 사이의 원소를 계속 꺼냄을 지속
+					flag = true;
+				}
+				// ( ) 원소가 아니면  연산자 우선 순의를 비교해  stack 에서 꺼내서  queue에 집어 넣는다.
+				while(size >= 0 && !flag && basic.get(stack.get(size)) >= basic.get(ch)){
+					queue.add(String.valueOf(stack.remove(size)));
+					size--;
+				}
+			}
+			if(ch != ')'){ // ) 아니면  stack에  집어넣어야 한다.
+				stack.add(ch);
+			}
+			else{ // 아니면 출동
+				stack.remove(stack.size() - 1);
+			}
 			
 		}
-		int size1=stack.size();//num과 같다
-		String []result=new String[num+size1];		
-		for(int i=0;i<num;i++){
-			//output에 있는 결과값 출력
-				result[i]=output[i];
-				//System.out.print(result[i]+" ");							
-				
-		}
-		int i=num;
-		while(size1!=0){
-			result[i]=(String)stack.pop();
-			//System.out.print(result[i]+" ");
-			i++;size1--;
-		}
-		
-		//System.out.println();
-		for(int i2=0;i2<result.length;i2++){
-			String input=result[i2];//첫번째문자부터대입
-			if(isAnOperator(input)){//input이 연산자일 경우 실행된다.
-				firstOperand=Double.parseDouble((String)stack.pop());//제거시킨원소를double형으로 변환하여 y에 대입
-				
-				secondOperand=Double.parseDouble((String)stack.pop());//연산자와 만나 stack에서 두개의 피연산자를 꺼내는 과정
-				
-				final Operator operator = Operator.findOperator(input);
-
-				z=operator.evaluate(secondOperand,firstOperand);
-				stack.push(""+z);		
-				
+		if(i == charArr.length -1){ // 중위 표현식의  맨 끝에 까지 오면
+			if(len > 0){
+				// 숫자를 잘라서 집어 넣는다.
+				queue.add(String.valueOf(Arrays.copyOfRange(charArr, i-len+1, i+1)));
 			}
-			else stack.push(input);
-				 
-		}//for
-
-		return z;
-        
-      /*  firstOperand = Double.parseDouble(tokens[0]);
-        if (tokens.length > 2) {
-            secondOperand = Double.parseDouble(tokens[2]);
-        } else {
-            secondOperand = Double.parseDouble(tokens[1]);
-        }
-        final Operator operator = Operator.findOperator(tokens[1]);
-
-        return operator.evaluate(firstOperand, secondOperand);
-*/       
-    }
-
-    public static void main( String[] args ) {
-        final CalcApp app = new CalcApp();
-        final StringBuilder outputs = new StringBuilder();
-        Arrays.asList(args).forEach(value -> outputs.append(value + " "));
-        System.out.print( "Addition of values: " + outputs + " = ");
-        System.out.println(app.calc(args));
-    }
+			int size = stack.size()-1; // 맨 마지막 index
+			// 모든 stack의 부호를 출동시켜 queue에 넣기
+			while(size >= 0){
+				queue.add(String.valueOf(stack.remove(size)));
+				size --;
+			}
+		}
+	}
+	// space로 출동
+	return queue.stream().collect(Collectors.joining(","));
+	
 }

@@ -6,6 +6,18 @@ import java.util.Arrays;
  * Calculator application
  */
 public class CalcApp {
+	
+	private static final Map<Character, Integer> basic = new HashMap<Character, Integer>();
+	static {
+		//priority
+		basic.put('+', 1);
+		basic.put('-', 1);
+		basic.put('*', 2);
+		basic.put('/', 2);
+		basic.put('(', 0);
+	}
+	
+	
     public double calc(String[] tokens) {
         final double firstOperand;
         final double secondOperand;

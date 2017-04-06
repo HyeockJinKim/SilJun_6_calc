@@ -2,6 +2,7 @@ package Calcu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
 public class CalcApp {
 	
 	private static final Map<Character, Integer> basic = new HashMap<Character, Integer>();
+
 	static{
 		basic.put('-', 1);
 		basic.put('+', 1);
@@ -20,6 +23,7 @@ public class CalcApp {
 		basic.put('(', 0);
 	}
 	
+
 	
 
 	public double calc(String[] tokens){
@@ -57,95 +61,131 @@ public class CalcApp {
 		System.out.println(app.calc(args));
 	}
 	
+
+
+	/*
+	 * ë¬¸ìì—´ strì´ ìˆ«ìì¸ì§€ í™•ì¸í•˜ëŠ” ë©”ì†Œë“œ.
+	 */
+	public boolean isNumeric(String str) {
+		//patternì€ ìˆ«ìë¡œë§Œ ì´ë£¨ì–´ì§„ íŒ¨í„´.
+		Pattern pattern = Pattern.compile("[0-9]*");
+		//strì´ patternì— ë§ëŠ”ì§€ í™•ì¸.
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches())
+			return false;
+		else
+			return true;
+	}
+	
+    public double calc(String[] tokens) {
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<tokens.length; i++) {
+        	if (this.isNumeric(tokens[i]))
+        		sb.append(tokens[i]);
+        	else if (tokens[i].indexOf("+-*/()") >= 0)
+        		sb.append(tokens[i]);
+        }
+        //ìˆ«ìì™€ ì—°ì‚°ìë§Œ StringBufferì— ì €ì¥.
+        
+        String str = toSuffix(sb.toString());		//í›„ìœ„ì‹ìœ¼ë¡œ ë³€í™˜
+        return Double.parseDouble(dealEquation(str)); //ê³„ì‚°
+    }
+
+    
+    public static void main( String[] args ) {
+        final CalcApp app = new CalcApp();
+        final StringBuilder outputs = new StringBuilder();
+        Arrays.asList(args).forEach(value -> outputs.append(value + " "));
+        System.out.print( "Addition of values: " + outputs + " = ");
+        System.out.println(app.calc(args));
+    }
 	public String toSuffix(String infix){
-		// queue¿¡  ÈÄÀ§ ½ÄÀÌ µé¾î °£´Ù.
+		
 		List<String> queue = new ArrayList<String>();
-		//°è»êÀ» ÇÒ·Á°í ÇÒ‹š ºÎÈ£¸¦ Áı¾î³Ö´Â´Ù.
+
 		List<Character> stack = new ArrayList<Character>();
-		// ¼ıÀÚ¿Í ºÎÈ£¸¦ ÀüºÎ Àß¶ó³½´Ù.
+	
 		char[] charArr = infix.trim().toCharArray();
-		// ÆÇÁ¤ Ç¥ÁØ¿À¸£ ¾´´Ù.
+		
 		String standard = "*/+-()";
 		
-		char ch = '&'; // ¾Æ¹« ÀÇ¹Ì ¾ø´Â ºÎÈ£  ±×³É  ÃÊ±âÈ­ ÇÏ±â À§ÇÑ ¼³Á¤
-		//charÀÇ  ±æÀÌ¸¦ ±â·ÏÇÑ´Ù.
+		char ch = '&'; 
+
 		int len = 0;
-		// ÁßÀ§½ÄÀ»  ÈÄÀ§½ÄÀ¸·Î º¯È­ÇÏ´Â °úÁ¤
+		
 		
 		for (int i = 0; i < charArr.length; i++) {
-			ch = charArr[i]; // ÇöÀç µ¥ÀÌÅÍ¸¦ ÀúÀå
+			ch = charArr[i]; 
 			
-			if(Character.isDigit(ch)){ // ¼ıÀÚ¸é
+			if(Character.isDigit(ch)){ 
 				len++;
 			}
-			else if(Character.isLetter(ch)){ // ¹®ÀÚ¸é
+			else if(Character.isLetter(ch)){ 
 				len++;
 			}
-			else if(ch == '.'){ // ¼Ò¼öÁ¡ ÀÌ¸é
+			else if(ch == '.'){ 
 				len++;
 			}
 			else if(Character.isSpaceChar(ch)){
-				/*
-				 *  spaceÀÌ¸é ÇÑ ´Ü¶ôÀÌ ³¡³­°ÍÀ» ¸»ÇÔ
-				 *  ¿¹  100 * 2 100µÚ¿¡  ½ºÆäÀÌ½º°¡ ÀÖ´Ù´Â °ÍÀ» ¸»ÇÏ±â ¶§¹®¿¡ spaceÀü°ÍÀ»  ÀúÀå
-				 */
+			
+			
 				if(len > 0){
-					// queue ¿¡ Ãß°¡
+					
 					queue.add(String.valueOf(Arrays.copyOfRange(charArr, i - len, i)));
 					len = 0;
 				}
-				continue; //  space°¡  ÀÖÀ¸¸é  
+				continue; 
 			}
-			else if(standard.indexOf(ch) != -1){ // À§¿¡ Á¤ÇØÁØ Ç¥ÁØÁßÀÇ ÀÓÀÇÀÇ ÇÏ³ªÀÌ¸é
+			else if(standard.indexOf(ch) != -1){
 				if(len > 0){
-					// ¼ıÀÚ¶ó ÆÇ´ÜÇÏ°í queue¿¡ Áı¾î³Ö±â
+		
 					queue.add(String.valueOf(Arrays.copyOfRange(charArr, i -len, i)));
 					len = 0;
 				}
-				if(ch == '('){ // ¿À¸¥ÂÊ°ıÈ£ ÀÌ¸é stack¿¡ ³Ö±â
+				if(ch == '('){
 					stack.add(ch);
 					continue;
 				}
-				if(!stack.isEmpty()){ // stack ¾È¿¡  ¹¹°¡ ÀÖ´Ù¸é
-					int size = stack.size()-1; // ¸Ç ¸¶Áö¸· ¿ø¼ÒÀÇ index
+				if(!stack.isEmpty()){ 
+					int size = stack.size()-1; 
 					boolean flag = false; 
-					// ch °¡ ) ÀÌ¸é stack ¿¡¼­ ( ¸¸³¯¶§ ±îÁö  ²¨³½´Ù.
+					
 					while(size >=0 && ch ==')' && stack.get(size) != '('){
-						// ²¨³½°ÍÀ» ´Ù½Ã queue¿¡ Áı¾î ³Ö±â
+					
 						queue.add(String.valueOf(stack.remove(size)));
-						// ¿µ¿øÈ÷ stackÀÇ  ²À´ë±â¸¦ °¡¸®Ä¡°ÔÇÔ( stackÀÇ ¼ºÁú)
+					
 						size--;
-						// true ÀÌ¸é ( ) »çÀÌÀÇ ¿ø¼Ò¸¦ °è¼Ó ²¨³¿À» Áö¼Ó
+					
 						flag = true;
 					}
-					// ( ) ¿ø¼Ò°¡ ¾Æ´Ï¸é  ¿¬»êÀÚ ¿ì¼± ¼øÀÇ¸¦ ºñ±³ÇØ  stack ¿¡¼­ ²¨³»¼­  queue¿¡ Áı¾î ³Ö´Â´Ù.
+			
 					while(size >= 0 && !flag && basic.get(stack.get(size)) >= basic.get(ch)){
 						queue.add(String.valueOf(stack.remove(size)));
 						size--;
 					}
 				}
-				if(ch != ')'){ // ) ¾Æ´Ï¸é  stack¿¡  Áı¾î³Ö¾î¾ß ÇÑ´Ù.
+				if(ch != ')'){ 
 					stack.add(ch);
 				}
-				else{ // ¾Æ´Ï¸é Ãâµ¿
+				else{ 
 					stack.remove(stack.size() - 1);
 				}
 				
 			}
-			if(i == charArr.length -1){ // ÁßÀ§ Ç¥Çö½ÄÀÇ  ¸Ç ³¡¿¡ ±îÁö ¿À¸é
+			if(i == charArr.length -1){
 				if(len > 0){
-					// ¼ıÀÚ¸¦ Àß¶ó¼­ Áı¾î ³Ö´Â´Ù.
+					
 					queue.add(String.valueOf(Arrays.copyOfRange(charArr, i-len+1, i+1)));
 				}
-				int size = stack.size()-1; // ¸Ç ¸¶Áö¸· index
-				// ¸ğµç stackÀÇ ºÎÈ£¸¦ Ãâµ¿½ÃÄÑ queue¿¡ ³Ö±â
+				int size = stack.size()-1; 
+				
 				while(size >= 0){
 					queue.add(String.valueOf(stack.remove(size)));
 					size --;
 				}
 			}
 		}
-		// space·Î Ãâµ¿
+		
 		return queue.stream().collect(Collectors.joining(","));
 		
 	}
@@ -187,6 +227,7 @@ public class CalcApp {
 		         }
 		  }
 		         
-		  return list.size() == 1 ? list.get(0) : "°è»ê½ÇÆĞ" ;
+		
+  return list.size() == 1 ? list.get(0) : "compute error" ;
 	}
 }

@@ -1,7 +1,10 @@
 package com.riotgames.sample;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Calculator application

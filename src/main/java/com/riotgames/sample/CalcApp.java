@@ -33,20 +33,20 @@ public class CalcApp {
 	}
 	
     public double calc(String[] tokens) {
-        final double firstOperand;
-        final double secondOperand;
-        firstOperand = Double.parseDouble(tokens[0]);
-        if (tokens.length > 2) {
-            secondOperand = Double.parseDouble(tokens[2]);
-        } else {
-            secondOperand = Double.parseDouble(tokens[1]);
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<tokens.length; i++) {
+        	if (this.isNumeric(tokens[i]))
+        		sb.append(tokens[i]);
+        	else if (tokens[i].indexOf("+-*/()") >= 0)
+        		sb.append(tokens[i]);
         }
-        final Operator operator = Operator.findOperator(tokens[1]);
-
-        return operator.evaluate(firstOperand, secondOperand);
-
+        //숫자와 연산자만 StringBuffer에 저장.
+        
+        String str = toSuffix(sb.toString());		//후위식으로 변환
+        return Double.parseDouble(dealEquation(str)); //계산
     }
 
+    
     public static void main( String[] args ) {
         final CalcApp app = new CalcApp();
         final StringBuilder outputs = new StringBuilder();

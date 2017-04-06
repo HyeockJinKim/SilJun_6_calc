@@ -1,6 +1,7 @@
 package com.riotgames.sample;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Calculator application
@@ -17,6 +18,19 @@ public class CalcApp {
 		basic.put('(', 0);
 	}
 	
+	/*
+	 * 문자열 str이 숫자인지 확인하는 메소드.
+	 */
+	public boolean isNumeric(String str) {
+		//pattern은 숫자로만 이루어진 패턴.
+		Pattern pattern = Pattern.compile("[0-9]*");
+		//str이 pattern에 맞는지 확인.
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches())
+			return false;
+		else
+			return true;
+	}
 	
     public double calc(String[] tokens) {
         final double firstOperand;

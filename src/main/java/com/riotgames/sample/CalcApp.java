@@ -1,4 +1,4 @@
-package Calcu;
+package com.riotgames.sample;
 
 import java.util.ArrayList;
 import java.util.Arrays;

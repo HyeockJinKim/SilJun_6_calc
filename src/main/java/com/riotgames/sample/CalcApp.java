@@ -24,44 +24,6 @@ public class CalcApp {
 	}
 	
 
-	
-
-	public double calc(String[] tokens){
-		
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < tokens.length; i++) {
-			
-			if(isNumeric(tokens[i])){
-				sb.append(tokens[i]);
-			}
-			else if(tokens[i].equals("+") || tokens[i].equals("-") || tokens[i].equals("*") || tokens[i].equals("/")
-			|| tokens[i].equals("(") || tokens[i].equals(")")){
-				sb.append(tokens[i]);
-			}
-		}
-		String str = toSuffix(sb.toString());
-		
-		return Double.parseDouble(dealEquation(str));
-	}
-	
-	public boolean isNumeric(String str){
-		Pattern pattern = Pattern.compile("[0-9]*");
-		Matcher isNum = pattern.matcher(str);
-		if(!isNum.matches()){
-			return false;
-		}
-		return true;
-	}
-	
-	public static void main(String[] args) {
-		final CalcApp app = new CalcApp();
-		final StringBuilder outputs = new StringBuilder();
-		Arrays.asList(args).forEach(value -> outputs.append(value + " "));
-		System.out.println("Addition of values: " + outputs + " = ");
-		System.out.println(app.calc(args));
-	}
-	
-
 
 	/*
 	 * 문자열 str이 숫자인지 확인하는 메소드.
@@ -99,7 +61,8 @@ public class CalcApp {
         System.out.print( "Addition of values: " + outputs + " = ");
         System.out.println(app.calc(args));
     }
-	public String toSuffix(String infix){
+    
+    public String toSuffix(String infix){
 		
 		List<String> queue = new ArrayList<String>();
 

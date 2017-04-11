@@ -18,7 +18,7 @@ public class CalcApp {
 	static{
 		basic.put('-', 1);
 		basic.put('+', 1);
-		basic.put('x', 2);
+		basic.put('*', 2);
 		basic.put('/', 2);
 		basic.put('(', 0);
 	}
@@ -39,13 +39,16 @@ public class CalcApp {
 			return true;
 	}
 	
+
     public double calc(String[] tokens) {
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<tokens.length; i++) {
-        	if (this.isNumeric(tokens[i]))
-        		sb.append(tokens[i]);
-        	else if ("+-x/()".indexOf(tokens[i]) >= 0)
-        		sb.append(tokens[i]);
+        	for(int j = 0; j<tokens[i].length();j++){
+	        	if (this.isNumeric(tokens[i].charAt(j)+""))
+	        		sb.append(tokens[i].charAt(j));
+	        	else if ("+-*/()".indexOf(tokens[i].charAt(j)) >= 0)
+	        		sb.append(tokens[i].charAt(j));
+        	}
         }
         //숫자와 연산자만 StringBuffer에 저장.
         
@@ -70,7 +73,7 @@ public class CalcApp {
 	
 		char[] charArr = infix.trim().toCharArray();
 		
-		String standard = "x/+-()";
+		String standard = "*/+-()";
 		
 		char ch = '&'; 
 
@@ -83,9 +86,9 @@ public class CalcApp {
 			if(Character.isDigit(ch)){ 
 				len++;
 			}
-			/*else if(Character.isLetter(ch)){ 
+			else if(Character.isLetter(ch)){ 
 				len++;
-			}*/
+			}
 			else if(ch == '.'){ 
 				len++;
 			}
@@ -172,8 +175,8 @@ public class CalcApp {
 		        	  // double b = Double.parseDouble(list.remove(size-2))- Double.parseDouble(list.remove(size-2)); 
 		        	   list.add(String.valueOf(b));     
 		        	   break;
-		           case "x":
-		        	   Operator operator3 = Operator.findOperator("*");
+		           case "*":
+		        	   Operator operator3 = Operator.findOperator(arr[i]);
 		        	   double c = operator3.evaluate(Double.parseDouble(list.remove(size-2)), Double.parseDouble(list.remove(size-2)));
 		        	   //double c = Double.parseDouble(list.remove(size-2))* 
 		        	   //Double.parseDouble(list.remove(size-2)); list.add(String.valueOf(c));     

@@ -83,9 +83,9 @@ public class CalcApp {
 			if(Character.isDigit(ch)){ 
 				len++;
 			}
-			else if(Character.isLetter(ch)){ 
+			/*else if(Character.isLetter(ch)){ 
 				len++;
-			}
+			}*/
 			else if(ch == '.'){ 
 				len++;
 			}

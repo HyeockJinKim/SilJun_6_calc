@@ -179,7 +179,8 @@ public class CalcApp {
 		        	   Operator operator3 = Operator.findOperator(arr[i]);
 		        	   double c = operator3.evaluate(Double.parseDouble(list.remove(size-2)), Double.parseDouble(list.remove(size-2)));
 		        	   //double c = Double.parseDouble(list.remove(size-2))* 
-		        	   //Double.parseDouble(list.remove(size-2)); list.add(String.valueOf(c));     
+		        	   //Double.parseDouble(list.remove(size-2)); 
+                                   list.add(String.valueOf(c));     
 		        	   break;
 		           case "/":
 		        	   Operator operator4 = Operator.findOperator(arr[i]);
